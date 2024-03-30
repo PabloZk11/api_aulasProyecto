@@ -1,0 +1,660 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Documentacion API - Aulas",
+        "description": "Listado de endpoints de producto - explicacion",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://apiaulas.test/"
+        }
+    ],
+    "paths": {
+        "/api/producto": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Listados de todos los productos",
+                "operationId": "ee7e80df0c66183eb67f3098c027b525",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_producto": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "nom_producto": {
+                                                        "type": "string",
+                                                        "example": "Esfero Pelikan"
+                                                    },
+                                                    "precio_unitario": {
+                                                        "type": "number",
+                                                        "format": "double",
+                                                        "example": "1500"
+                                                    },
+                                                    "unidades_disponibles": {
+                                                        "type": "integer",
+                                                        "example": "30"
+                                                    },
+                                                    "marca": {
+                                                        "type": "string",
+                                                        "example": "Pelikan"
+                                                    },
+                                                    "proveedor_id_proveedor": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "categoria_producto": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Ingreso de nuevos productos a la base de datos",
+                "operationId": "5806e61ee6b2e7b552a58d41054770dd",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_producto": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "nom_producto": {
+                                                        "type": "string",
+                                                        "example": "Esfero Pelikan"
+                                                    },
+                                                    "precio_unitario": {
+                                                        "type": "number",
+                                                        "format": "double",
+                                                        "example": "1500"
+                                                    },
+                                                    "unidades_disponibles": {
+                                                        "type": "integer",
+                                                        "example": "30"
+                                                    },
+                                                    "marca": {
+                                                        "type": "string",
+                                                        "example": "Pelikan"
+                                                    },
+                                                    "proveedor_id_proveedor": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "categoria_producto": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/producto/{id}": {
+            "get": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Mostrar la información de un solo producto",
+                "operationId": "a6d49ccf55297bdf564ce000dad43f71",
+                "parameters": [
+                    {
+                        "name": "id_producto",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id_producto": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "nom_producto": {
+                                            "type": "string",
+                                            "example": "Esfero Pelikan"
+                                        },
+                                        "precio_unitario": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": "1500"
+                                        },
+                                        "unidades_disponibles": {
+                                            "type": "integer",
+                                            "example": "30"
+                                        },
+                                        "marca": {
+                                            "type": "string",
+                                            "example": "Pelikan"
+                                        },
+                                        "proveedor_id_proveedor": {
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "categoria_producto": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\\\Models\\\\Cliente] #id"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Productos"
+                ],
+                "summary": "Actualizacion de un producto especificado",
+                "operationId": "7f0b3e6c22284c29ebfc56e82b6bc213",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_producto": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "nom_producto": {
+                                                        "type": "string",
+                                                        "example": "Esfero Pelikan"
+                                                    },
+                                                    "precio_unitario": {
+                                                        "type": "number",
+                                                        "format": "double",
+                                                        "example": "1500"
+                                                    },
+                                                    "unidades_disponibles": {
+                                                        "type": "integer",
+                                                        "example": "30"
+                                                    },
+                                                    "marca": {
+                                                        "type": "string",
+                                                        "example": "Pelikan"
+                                                    },
+                                                    "proveedor_id_proveedor": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "categoria_producto": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/salida": {
+            "get": {
+                "tags": [
+                    "Registro_salida"
+                ],
+                "summary": "Muestra la informacion de las salidas (venta)",
+                "operationId": "6bdcb9fbc1cd912eba61d76194f1a97d",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_salida": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "unidades": {
+                                                        "type": "integer",
+                                                        "example": "5"
+                                                    },
+                                                    "id_factura_salida": {
+                                                        "type": "integer",
+                                                        "example": "8"
+                                                    },
+                                                    "id_producto": {
+                                                        "type": "integer",
+                                                        "example": "3"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Registro_salida"
+                ],
+                "summary": "Ingresa la informacion de una salida (venta)",
+                "operationId": "f0fa9e44ec5c26ac66a1a32e46d5ec07",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_salida": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "unidades": {
+                                                        "type": "integer",
+                                                        "example": "5"
+                                                    },
+                                                    "id_factura_salida": {
+                                                        "type": "integer",
+                                                        "example": "8"
+                                                    },
+                                                    "id_producto": {
+                                                        "type": "integer",
+                                                        "example": "3"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/salida/{id}": {
+            "get": {
+                "tags": [
+                    "Registro_salida"
+                ],
+                "summary": "Mostrar la información de una unica salida (venta)",
+                "operationId": "c6689ff6ab964319e91b667ef442b6f6",
+                "parameters": [
+                    {
+                        "name": "id_salida",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id_salida": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "unidades": {
+                                            "type": "integer",
+                                            "example": "5"
+                                        },
+                                        "id_factura_salida": {
+                                            "type": "integer",
+                                            "example": "8"
+                                        },
+                                        "id_producto": {
+                                            "type": "integer",
+                                            "example": "3"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\\\Models\\\\Cliente] #id"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usuario": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Listados de todos los usuarios",
+                "operationId": "5f4ee77eaff1a0dee6bcab90dd4df5c5",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_usuario": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "nombre": {
+                                                        "type": "string",
+                                                        "example": "Andra Roman"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "andrroman@gmail.com"
+                                                    },
+                                                    "contraseña": {
+                                                        "type": "varbinary",
+                                                        "example": "ASDAGFAFAGEGEW"
+                                                    },
+                                                    "rol_usuario": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "tdoc_proveedor": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Actualizar informacion de un usuario",
+                "operationId": "89cdf13d6c38bd8263209b4a24492b53",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_usuario": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "nombre": {
+                                                        "type": "string",
+                                                        "example": "Andra Roman"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "andrroman@gmail.com"
+                                                    },
+                                                    "contraseña": {
+                                                        "type": "varbinary",
+                                                        "example": "ASDAGFAFAGEGEW"
+                                                    },
+                                                    "rol_usuario": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "tdoc_proveedor": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Ingreso de un usuario al sistema",
+                "operationId": "bddff45fda10d3d9b413468e81f532a0",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id_usuario": {
+                                                        "type": "integer",
+                                                        "example": "1"
+                                                    },
+                                                    "nombre": {
+                                                        "type": "string",
+                                                        "example": "Andra Roman"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "andrroman@gmail.com"
+                                                    },
+                                                    "contraseña": {
+                                                        "type": "varbinary",
+                                                        "example": "ASDAGFAFAGEGEW"
+                                                    },
+                                                    "rol_usuario": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    },
+                                                    "tdoc_proveedor": {
+                                                        "type": "integer",
+                                                        "example": "2"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usuario/{id}": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Mostrar la información de un solo usuario",
+                "operationId": "e2b485ae0e81b04476da856d5bc824f8",
+                "parameters": [
+                    {
+                        "name": "id_usuario",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id_usuario": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "nombre": {
+                                            "type": "string",
+                                            "example": "Andra Carmon"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "andrroman@gmail.com"
+                                        },
+                                        "contraseña": {
+                                            "type": "integer",
+                                            "example": "ASDAGFAFAGEGEW"
+                                        },
+                                        "rol_usuario": {
+                                            "type": "string",
+                                            "example": "2"
+                                        },
+                                        "tdoc_usuario": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\\\Models\\\\Cliente] #id"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
