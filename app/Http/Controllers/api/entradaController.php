@@ -11,25 +11,132 @@ use App\Http\Requests\RegistrarEntradaRequest;
 use App\Models\entrada_mercancia;
 use App\Models\producto;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class entradaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+     /**
+    * @OA\Get(
+    *     path="/api/entrada_mercancia",
+    *     tags={"Entrada_mercancia"},
+    *     summary="Mostrar entradas",
+    *     @OA\Response(
+    *         response=200,
+    *         description="Mostrar todas las entradas de la tienda.",
+    *          @OA\JsonContent(
+     *             @OA\Property(
+     *                 type="array",
+     *                 property="rows",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id_entrada",
+     *                         type="number",
+     *                         example="3"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="cantidad_unidades",
+     *                         type="number",
+     *                         example="20"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="id_producto",
+     *                         type="number",
+     *                         example="20."
+     *                     ),
+     *                     @OA\Property(
+     *                         property="id_pedido",
+     *                         type="number",
+     *                         example="2"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="id_proveedor",
+     *                         type="number",
+     *                         example="1"
+     *                     )
+     *                 )
+     *             )
+     *         )  
+    *     ),
+    *     @OA\Response(
+    *         response="default",
+    *         description="Ha ocurrido un error."
+    *     )
+    * )
+    */
     public function index()
     {
-        try{
-            $entrada = entrada_mercancia::all();
-            return  apiResponses::success('Listado de entradas: ',205,$entrada);
-        } catch(Exception $e){
-            return apiResponses::error('Algo salió mal al retornar las entradas '.$e->getMessage(),500);
+        try {
+            $entrada = entrada_mercancia::select('id_entrada', 'cantidad_unidades', 'id_producto', 'id_pedido', "id_proveedor")
+            ->with('producto:id_producto,nom_producto', 'proveedor:id_proveedor,nom_proveedor') 
+            ->get();
+            
+            return apiResponses::success("Listado de entradas de mercancia", 200, $entrada);
+        } catch (Exception $e){
+            return apiResponses::error("algo salio mal".$e->getMessage(),404);
         }
     }
 
-
+    public function indexPdf()
+    {
+        try{
+            $entrada = entrada_mercancia::all();
+            $pdf = PDF::loadView('entrada',['entradas'=> $entrada]);
+            return $pdf->download('EntradasReporte.pdf');
+        }catch (Exception $e){
+            return apiResponses::error("algo salio mal".$e->getMessage(),404);
+        }
+    }
+    /**
+     * Registrar entrada
+     * @OA\Post(
+     *     path="/api/entrada_mercancia",
+     *     tags={"Entrada_mercancia"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"cantidad_unidades", "id_producto", "id_pedido", "id_proveedor"},
+     *             @OA\Property(
+     *                 property="cantidad_unidades",
+     *                 type="number",
+     *                 example=250
+     *             ),
+     *             @OA\Property(
+     *                 property="id_producto",
+     *                 type="number",
+     *                 example=1
+     *             ),
+     *             @OA\Property(
+     *                 property="id_pedido",
+     *                 type="number",
+     *                 example=2
+     *             ),
+     *             @OA\Property(
+     *                 property="id_proveedor",
+     *                 type="number",
+     *                 example=1
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Pedido creado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Pedido guardado exitosamente"),
+     *             @OA\Property(property="code", type="integer", example=201),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Datos de entrada no válidos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Algo falló al intentar guardar el pedido"),
+     *             @OA\Property(property="code", type="integer", example=422)
+     *         )
+     *     )
+     * )
+     */
     public function store(RegistrarEntradaRequest $request)
     {
        try{
@@ -53,10 +160,35 @@ class entradaController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Mostrar una entrada específica.
+     * @OA\get(
+     *     path="/api/entrada_mercancia/{id_entrada}",
+     *     tags={"Entrada_mercancia"},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="id_entrada",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Entrada retornada exitosamente",
+     *         @OA\JsonContent(
+     *              @OA\Property(property="id_entrada", type="number", example=3),
+     *              @OA\Property(property="cantidad_unidades", type="number", example=20),
+     *              @OA\Property(property="id_producto", type="number", example=1),
+     *              @OA\Property(property="id_pedido", type="number", example=2),
+     *              @OA\Property(property="id_proveedor", type="number", example=1)
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="NOT FOUND",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\entrada_mercancia] #id_entrada"),
+     *          )
+     *      )
+     * )
      */
     public function show($id_entrada)
     {

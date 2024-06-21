@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use App\Http\Responses\apiResponses;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class re_salidaController extends Controller
 {
@@ -56,12 +57,28 @@ class re_salidaController extends Controller
     public function index()
     {
         try {
-            $registro_salida = registro_salida::all();
-            return apiResponses::success("Listado de salidas",200,$registro_salida);
+            $registro_salida = registro_salida::select('id_salida', 'unidades', 'id_factura_salida', "id_producto")
+            ->with('producto:id_producto,nom_producto') // Selecciona todas las columnas de producto
+            ->get();
+            
+            return apiResponses::success("Listado de ventas", 200, $registro_salida);
         } catch (Exception $e){
+            return apiResponses::error("Algo salió mal: " . $e->getMessage(), 404);
+        }
+    }
+    
+    public function indexPdf()
+    {
+        try{
+            $registro_salida = registro_salida::select('id_salida', 'unidades', 'id_factura_salida', 'id_producto')->get();
+            $pdf = PDF::loadView('re_salida',['registro_salidas'=> $registro_salida]);
+            return $pdf->download('registro_salidaReporte.pdf');
+        }catch (Exception $e){
             return apiResponses::error("algo salio mal".$e->getMessage(),404);
         }
     }
+    
+    
 
 /**
      * Ingresa la informacion de una salida (venta)

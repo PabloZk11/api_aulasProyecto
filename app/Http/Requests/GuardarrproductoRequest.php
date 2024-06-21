@@ -26,8 +26,8 @@ class guardarrproductoRequest extends FormRequest
             "precio_unitario" => "required",
             "unidades_disponibles" => "required",
             "marca" => "required",
-            "proveedor_id_proveedor" => "required",
-            "categoria_producto" => "required"
+            "id_proveedor" => "required",
+            "id_categoria" => "required"
         ];
     }
 }

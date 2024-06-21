@@ -16,10 +16,40 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class categoriaController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+     * Listado de las categorías de productos que ofrece la tienda.
+     * @OA\Get(
+     *     path="/api/categoria_productos",
+     *     tags={"Categoria"},     
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de categorías",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 type="array",
+     *                 property="rows",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id_categoria",
+     *                         type="number",
+     *                         example="1"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="nombre_categoria",
+     *                         type="string",
+     *                         example="Cuadernos"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="descripcion",
+     *                         type="string",
+     *                         example="Descripción que puede ser cuadernos, lápices, etc."
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
+     **/
     public function index()
     {
         try{
@@ -30,11 +60,45 @@ class categoriaController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+        /**
+     * Registrar entrada
+     * @OA\Post(
+     *     path="/api/categoria_productos",
+     *     tags={"Categoria"},     
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"nombre_categoria", "descripcion"},
+     *             @OA\Property(
+     *                 property="nombre_categoria",
+     *                 type="string",
+     *                 example="Categoria de tijeras (ejemplo)."
+     *             ),
+     *             @OA\Property(
+     *                 property="descripcion",
+     *                 type="string",
+     *                 example="Describiendo algún aspecto importante de la categoría tijeras."
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Categoría registrada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Categoría registrada exitosamente"),
+     *             @OA\Property(property="code", type="integer", example=201),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Datos de entrada no válidos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Algo falló al intentar registrar la categoría"),
+     *             @OA\Property(property="code", type="integer", example=422)
+     *         )
+     *     )
+     * )
      */
     public function store(GuardarCategoriaRequest $request)
     {
@@ -50,10 +114,33 @@ class categoriaController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id_categoria
-     * @return \Illuminate\Http\Response
+     * Mostrar la información de un pedido en específico.
+     * @OA\get(
+     *     path="/api/categoria_productos/{id_categoria}",
+     *     tags={"Categoria"},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="id_categoria",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categoría retornado exitosamente",
+     *         @OA\JsonContent(
+     *              @OA\Property(property="id_categoria", type="number", example=3),
+     *              @OA\Property(property="nombre_categoria", type="string", example="Nombre de categoría ejemplo lápices"),
+     *              @OA\Property(property="descripcion", type="string", example="Describiendo la categoría ejemplo lápices")
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="NOT FOUND",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\Pedido] #id_pedido"),
+     *          )
+     *      )
+     * )
      */
     public function show($id_categoria)
     {
@@ -66,12 +153,63 @@ class categoriaController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+     * Actualizar categoría existente
+     * @OA\Put(
+     *     path="/api/categoria_productos/{id_categoria}",
+     *     tags={"Categoria"},
+     *     summary="Actualizar categoría",
+     *     @OA\Parameter(
+     *         name="id_categoria",
+     *         in="path",
+     *         description="ID de la categoría a actualizar",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="nombre_categoria",
+     *                 type="string",
+     *                 example="Nuevo nombre de categoría"
+     *             ),
+     *             @OA\Property(
+     *                 property="descripcion",
+     *                 type="string",
+     *                 example="Nueva descripción de la categoría"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categoría actualizada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Categoría actualizada exitosamente"),
+     *             @OA\Property(property="code", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Categoría no encontrada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="La categoría no fue encontrada"),
+     *             @OA\Property(property="code", type="integer", example=404)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Datos de entrada no válidos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Algo falló al actualizar la categoría"),
+     *             @OA\Property(property="code", type="integer", example=422)
+     *         )
+     *     )
+     * )
+     **/
     public function update(updateCategoriaRequest $request,  $id_categoria)
     {
         try{                  
@@ -92,11 +230,39 @@ class categoriaController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+     * Eliminar una categoría existente
+     * @OA\Delete(
+     *     path="/api/categoria_productos/{id_categoria}",
+     *     tags={"Categoria"},
+     *     summary="Eliminar categoría",
+     *     @OA\Parameter(
+     *         name="id_categoria",
+     *         in="path",
+     *         description="ID de la categoría a eliminar",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Categoría eliminada exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Categoría eliminada exitosamente"),
+     *             @OA\Property(property="code", type="integer", example=200)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Categoría no encontrada",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="La categoría no fue encontrada"),
+     *             @OA\Property(property="code", type="integer", example=404)
+     *         )
+     *     )
+     * )
+     **/
     public function destroy( $id_categoria)
     {
         try{

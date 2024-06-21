@@ -24,7 +24,7 @@ class GuardarDevolucionRequest extends FormRequest
         return [
             'id_producto' => 'required',
             'unidades' => 'required',
-            'id_entrada_devolvuion' => 'required'
+            'id_entrada' => 'required'
             ];
     }
 }

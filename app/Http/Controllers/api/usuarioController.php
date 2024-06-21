@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\usuario;
 use App\Http\Requests\postUsuario;
 use App\Http\Requests\updUsuario;
+use Illuminate\Support\Facades\Hash;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class usuarioController extends Controller
 {
@@ -66,8 +69,22 @@ class usuarioController extends Controller
     public function index()
     {
         try{
-            $usuario = usuario::select('id_usuario', 'nombre', 'email', 'rol_usuario', "tdoc_usuario")->get();
-            return apiResponses::success("Listado de usuarios",200,$usuario);
+            $usuario = usuario::select('id_usuario', 'nombre', 'email', 'id_rol', "id_documento")
+            ->with('roles:id_rol,nombre_rol', 'documento_ident:id_documento,tipo_documento') // Selecciona todas las columnas de producto
+            ->get();
+            
+            return apiResponses::success("Listado de usuarios", 200, $usuario);
+        }catch (Exception $e){
+            return apiResponses::error("algo salio mal".$e->getMessage(),404);
+        }
+    }
+
+    public function indexPdf()
+    {
+        try{
+            $usuario = usuario::select('id_usuario', 'nombre', 'email', 'id_usuario', "id_rol")->get();
+            $pdf = PDF::loadView('usuario',['usuarios'=> $usuario]);
+            return $pdf->download('usuarioReporte.pdf');
         }catch (Exception $e){
             return apiResponses::error("algo salio mal".$e->getMessage(),404);
         }
@@ -127,13 +144,13 @@ class usuarioController extends Controller
     {
         try{
             $usuario = usuario::create([
-                'nombre' => $request->nombre,
-                'email' => $request->email,
-                'contraseña' => $request->contraseña,
-                "rol_usuario" => $request->rol_usuario,
-                'id_tdoc_usuario' => $request->id_tdoc_usuario,
+                'nombre' => $request-> nombre,
+                'email' => $request-> email,
+                'contraseña' => Hash::make($request->contraseña), 
+                "id_rol" => $request-> id_rol,
+                'id_documento' => $request-> id_documento,
             ]);
-            return apiResponses::success('producto guardado exitosamente',201, $usuario);
+            return apiResponses::success('Usuario guardado exitosamente',201, $usuario);
         }catch(Exception $e){
             return apiResponses::error("algo salio mal".$e->getMessage(),404);
         }

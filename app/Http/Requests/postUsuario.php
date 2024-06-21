@@ -25,8 +25,8 @@ class postUsuario extends FormRequest
             "nombre" => "required",
             "email" => "required",
             "contraseña" => "required",
-            "rol_usuario" => "required",
-            "tdoc_usuario" => "required",
+            "id_rol" => "required",
+            "id_documento" => "required",
         ];
     }
 }

@@ -10,33 +10,130 @@ use Illuminate\Http\Request;
 use Exception;
 use App\Http\Responses\apiResponses;
 use App\Models\devolucion;
+use App\Models\usuario;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class devolucionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listado de todos los registros de devoluciones
+     * @OA\Get (
+     *     path="/api/devolucion",
+     *     tags={"Devolucion"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 type="array",
+     *                 property="rows",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id_devolucion",
+     *                         type="number",
+     *                         example="2"
+     *                     ),
+     *                    
+     *               
+     *                     @OA\Property(
+     *                         property="id_producto",
+     *                         type="number",
+     *                         example="1"
+     *                     ),
+     *                        
+     *                     @OA\Property(
+     *                         property="unidades",
+     *                         type="number",
+     *                         example="20"
+     *                     ),
+     *                    
+     *                     @OA\Property(
+     *                         property="id_entrada_devolucion",
+     *                         type="number",
+     *                         example="2"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index()
     {
         try{
+            $devolucion = devolucion::select('id_devolucion', 'id_producto', 'unidades', 'id_entrada')
+            ->with('producto:id_producto,nom_producto') 
+            ->get();
+            
+            return apiResponses::success("Listado de devoluciones", 200, $devolucion);
+        }catch (Exception $e){
+            return apiResponses::error("algo salio mal".$e->getMessage(),404);
+        }
+    }
+
+    public function indexPdf()
+    {
+        try{
             $devolucion = devolucion::all();
-            return  apiResponses::success('Listado de devoluciones: ',205,$devolucion);
-        } catch(Exception $e){
-            return apiResponses::error('Algo salió mal al llamar los pedidos '.$e->getMessage(),500);
+            $pdf = PDF::loadView('devolucion',['devoluciones'=> $devolucion]);
+            return $pdf->download('DevolucionReporte.pdf');
+        }catch (Exception $e){
+            return apiResponses::error("algo salio mal".$e->getMessage(),404);
         }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Listado de todos los registros de devoluciones
+     * @OA\Post (
+     *     path="/api/devolucion",
+     *     tags={"Devolucion"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 type="array",
+     *                 property="rows",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id_devolucion",
+     *                         type="number",
+     *                         example="2"
+     *                     ),
+     *                    
+     *               
+     *                     @OA\Property(
+     *                         property="id_producto",
+     *                         type="number",
+     *                         example="1"
+     *                     ),
+     *                        
+     *                     @OA\Property(
+     *                         property="unidades",
+     *                         type="number",
+     *                         example="20"
+     *                     ),
+     *                    
+     *                     @OA\Property(
+     *                         property="id_entrada_devolucion",
+     *                         type="number",
+     *                         example="2"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function store(GuardarDevolucionRequest $request)
     {
         try{
             $devolucion = devolucion::create([
-                "id_producto " => $request -> id_producto ,
+                "id_producto" => $request -> id_producto,
                 "unidades" => $request -> unidades,
-                "id_entrada_devolvuion"  => $request -> id_entrada_devolucion,
-              
+                "id_entrada"  => $request -> id_entrada
             ]);
             return apiResponses::success('devolucion guardada exitosamente',201, $devolucion);
         }catch(ValidationException $e){
@@ -44,8 +141,38 @@ class devolucionController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
+        /**
+     * Mostrar la información de una devolucion
+     * @OA\Get (
+     *     path="/api/devolucion/{id_devolucion}",
+     *     tags={"Devolucion"},
+     *     @OA\Parameter(
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *              @OA\Property(property="id_devolucion", type="number", example=1),
+     *              @OA\Property(property="id_producto", type="number", example="1"),
+     *              @OA\Property(property="unidades", type="number", example="10"),
+     *              @OA\Property(property="id_entrada_devolucion", type="number", example="2")
+     *              
+     *             
+     *             
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="NOT FOUND",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="message", type="string", example="No query results for model [App\\Models\\factura_salida] #id_factura_salida"),
+     *          )
+     *      )
+     * )
      */
     public function show(string $id_devolucion)
     {
@@ -57,9 +184,7 @@ class devolucionController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+
     public function update(ActualizarDevolucionRequest $request, devolucion $id_devolucion)
     {
         try{                  

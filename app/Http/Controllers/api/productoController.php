@@ -11,6 +11,8 @@ use App\Models\producto;
 use App\Http\Requests\guardarrproductoRequest;
 use App\Http\Requests\updProductosRequest;
 use App\Http\Responses\apiResponses;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class productoController extends Controller
 {
@@ -73,13 +75,26 @@ class productoController extends Controller
     {
         //return producto::all();
         try {
-            $producto = producto::all();
-            return apiResponses::success("Listado de productos",200,$producto);
+            $producto = producto::select("id_producto", "nom_producto", "precio_unitario", "unidades_disponibles", "marca", "id_proveedor", "id_categoria")
+            ->with('proveedor:id_proveedor,nom_proveedor', 'categoria:id_categoria,nombre_categoria') // Selecciona todas las columnas de producto
+            ->get();
+            
+            return apiResponses::success("Listado de productos", 200, $producto);
         } catch (Exception $e){
             return apiResponses::error("algo salio mal".$e->getMessage(),404);
         }
     }
-
+    
+    public function indexPdf()
+    {
+        try{
+            $producto = producto::all();
+            $pdf = PDF::loadView('producto',['productos'=> $producto]);
+            return $pdf->download('productosReporte.pdf');
+        }catch (Exception $e){
+            return apiResponses::error("algo salio mal".$e->getMessage(),404);
+        }
+    }
 /**
      * Ingreso de nuevos productos a la base de datos
      * @OA\Post (
@@ -138,13 +153,16 @@ class productoController extends Controller
     public function store(GuardarrproductoRequest $request)
     {
         try{
+
+            Log::debug('Valor de id_proveedor recibido:', ['id_proveedor' => $request->id_proveedor]);
+
             $producto = producto::create([
                 "nom_producto" => $request -> nom_producto,
                 "precio_unitario" => $request -> precio_unitario,
                 "unidades_disponibles" => $request -> unidades_disponibles,
                 "marca" => $request -> marca,
-                "proveedor_id_proveedor" => $request -> proveedor_id_proveedor,
-                "categoria_producto" => $request -> categoria_producto
+                "id_proveedor" => $request -> id_proveedor,
+                "id_categoria" => $request -> id_categoria
             ]);
             return apiResponses::success('producto guardado exitosamente',201, $producto);
             }catch (ValidationException $e) {
